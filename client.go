@@ -2,6 +2,7 @@ package gorunemetrics
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -26,6 +27,10 @@ const (
 	questsAPIURL  = baseAPIURL + "/quests"
 )
 
+var (
+	ErrUnexpectedStatusCode = errors.New("unexpected status code")
+)
+
 func NewClient(httpClient *http.Client) Client {
 	return &client{
 		httpClient: httpClient,
@@ -41,6 +46,10 @@ func (c *client) GetProfile(playerName string) (*PlayerProfile, error) {
 	}
 
 	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to GET player profile: %v: %w", response.Status, err)
+	}
 
 	profile := &PlayerProfile{}
 
@@ -60,6 +69,10 @@ func (c *client) GetQuests(playerName string) ([]*PlayerQuestStatus, error) {
 	}
 
 	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to GET player quest status: %v: %w", response.Status, err)
+	}
 
 	quests := struct {
 		Quests []*PlayerQuestStatus `json:"quests"`
