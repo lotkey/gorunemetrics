@@ -1,0 +1,33 @@
+{
+    "name": "Go RuneMetrics Development Container",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "mounts": [
+        {
+            "source": "${localEnv:HOME}/.ssh",
+            "target": "/home/vscode/.ssh",
+            "type": "bind"
+        }
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "392781.runescape-icon-theme",
+                "emeraldwalk.RunOnSave",
+                "golang.Go",
+                "ms-azuretools.vscode-docker"
+            ]
+        },
+        "settings": {
+            "emeraldwalk.runonsave": {
+                "commands": [
+                    {
+                        "match": "\\.go$",
+                        "cmd": "golines ${file} -w -m 80"
+                    }
+                ]
+            }
+        }
+    }
+}
