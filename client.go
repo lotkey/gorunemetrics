@@ -11,8 +11,11 @@ import (
 )
 
 type (
+	// Client represents a RuneMetrics client.
 	Client interface {
+		// GetProfile returns profile data given a username.
 		GetProfile(playerName string) (*PlayerProfile, error)
+		// GetQuests returns quest statuses given a username.
 		GetQuests(playerName string) ([]*PlayerQuestStatus, error)
 	}
 
@@ -28,9 +31,15 @@ const (
 )
 
 var (
+	// ErrUnexpectedStatusCode is returned when an unexpected status code is
+	// encountered from RuneMetrics.
 	ErrUnexpectedStatusCode = errors.New("unexpected status code")
+	// ErrMissingPlayerData is returned when player data is missing in the
+	// RuneMetrics response.
+	ErrMissingPlayerData = errors.New("missing player data")
 )
 
+// NewClient creates a new RuneMetrics API client given an HTTP client.
 func NewClient(httpClient *http.Client) Client {
 	return &client{
 		httpClient: httpClient,
@@ -51,13 +60,14 @@ func (c *client) GetProfile(playerName string) (*PlayerProfile, error) {
 		return nil, fmt.Errorf("failed to GET player profile: %v: %w", response.Status, err)
 	}
 
-	profile := &PlayerProfile{
-		Activities:  []*Activity{},
-		SkillValues: []*SkillValue{},
-	}
+	profile := &PlayerProfile{}
 
 	if err := json.NewDecoder(response.Body).Decode(profile); err != nil {
 		return nil, fmt.Errorf("failed to decode player profile: %w", err)
+	}
+
+	if len(profile.SkillValues) == 0 || profile.Activities == nil {
+		return nil, fmt.Errorf("failed to find player profile data: %w", ErrMissingPlayerData)
 	}
 
 	return profile, nil
@@ -79,12 +89,14 @@ func (c *client) GetQuests(playerName string) ([]*PlayerQuestStatus, error) {
 
 	quests := struct {
 		Quests []*PlayerQuestStatus `json:"quests"`
-	}{
-		Quests: []*PlayerQuestStatus{},
-	}
+	}{}
 
 	if err := json.NewDecoder(response.Body).Decode(&quests); err != nil {
 		return nil, fmt.Errorf("failed to decode player quest status: %w", err)
+	}
+
+	if quests.Quests == nil {
+		return nil, fmt.Errorf("failed to find player quest status data: %w", ErrMissingPlayerData)
 	}
 
 	return quests.Quests, nil

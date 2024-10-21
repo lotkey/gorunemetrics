@@ -131,7 +131,7 @@ func (a *Activity) String() string {
 	return fmt.Sprintf("{date: %v, "+
 		"details: %v, "+
 		"text: %v}",
-		a.Date,
+		time.Time(a.Date),
 		a.Details,
 		a.Text,
 	)
