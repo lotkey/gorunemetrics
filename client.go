@@ -51,7 +51,10 @@ func (c *client) GetProfile(playerName string) (*PlayerProfile, error) {
 		return nil, fmt.Errorf("failed to GET player profile: %v: %w", response.Status, err)
 	}
 
-	profile := &PlayerProfile{}
+	profile := &PlayerProfile{
+		Activities:  []*Activity{},
+		SkillValues: []*SkillValue{},
+	}
 
 	if err := json.NewDecoder(response.Body).Decode(profile); err != nil {
 		return nil, fmt.Errorf("failed to decode player profile: %w", err)
@@ -76,7 +79,9 @@ func (c *client) GetQuests(playerName string) ([]*PlayerQuestStatus, error) {
 
 	quests := struct {
 		Quests []*PlayerQuestStatus `json:"quests"`
-	}{}
+	}{
+		Quests: []*PlayerQuestStatus{},
+	}
 
 	if err := json.NewDecoder(response.Body).Decode(&quests); err != nil {
 		return nil, fmt.Errorf("failed to decode player quest status: %w", err)

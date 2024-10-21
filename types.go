@@ -1,15 +1,21 @@
 package gorunemetrics
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+	"strings"
+	"time"
+)
 
 type (
 	Skill       int
 	QuestStatus string
 
 	Activity struct {
-		Date    string `json:"date"`
-		Details string `json:"details"`
-		Text    string `json:"text"`
+		Date    StringEncodedTime `json:"date"`
+		Details string            `json:"details"`
+		Text    string            `json:"text"`
 	}
 
 	SkillValue struct {
@@ -20,20 +26,20 @@ type (
 	}
 
 	PlayerProfile struct {
-		Activities       []*Activity   `json:"activities"`
-		CombatLevel      int           `json:"combatlevel"`
-		LoggedIn         string        `json:"loggedIn"`
-		MagicXP          int           `json:"magic"`
-		MeleeXP          int           `json:"melee"`
-		Name             string        `json:"name"`
-		QuestsComplete   int           `json:"questscomplete"`
-		QuestsNotStarted int           `json:"questsnotstarted"`
-		QuestsStarted    int           `json:"queststarted"`
-		RangedXP         int           `json:"ranged"`
-		Rank             string        `json:"rank"`
-		SkillValues      []*SkillValue `json:"skillvalues"`
-		TotalSkill       int           `json:"totalskill"`
-		TotalXP          int           `json:"totalxp"`
+		Activities       []*Activity       `json:"activities"`
+		CombatLevel      int               `json:"combatlevel"`
+		LoggedIn         StringEncodedBool `json:"loggedIn"`
+		MagicXP          int               `json:"magic"`
+		MeleeXP          int               `json:"melee"`
+		Name             string            `json:"name"`
+		QuestsComplete   int               `json:"questscomplete"`
+		QuestsNotStarted int               `json:"questsnotstarted"`
+		QuestsStarted    int               `json:"queststarted"`
+		RangedXP         int               `json:"ranged"`
+		Rank             StringEncodedInt  `json:"rank"`
+		SkillValues      []*SkillValue     `json:"skillvalues"`
+		TotalSkill       int               `json:"totalskill"`
+		TotalXP          int               `json:"totalxp"`
 	}
 
 	PlayerQuestStatus struct {
@@ -44,6 +50,10 @@ type (
 		Title        string      `json:"title"`
 		UserEligible bool        `json:"userEligible"`
 	}
+
+	StringEncodedBool bool
+	StringEncodedInt  int
+	StringEncodedTime time.Time
 )
 
 const (
@@ -217,4 +227,52 @@ func (s Skill) String() string {
 	default:
 		return ""
 	}
+}
+
+func (s *StringEncodedBool) UnmarshalJSON(data []byte) error {
+	stringValue := ""
+
+	if err := json.Unmarshal(data, &stringValue); err != nil {
+		return err
+	}
+
+	*s = stringValue == "true"
+
+	return nil
+}
+
+func (s *StringEncodedInt) UnmarshalJSON(data []byte) error {
+	stringValue := ""
+
+	if err := json.Unmarshal(data, &stringValue); err != nil {
+		return err
+	}
+
+	stringValue = strings.ReplaceAll(stringValue, ",", "")
+
+	int64Value, err := strconv.ParseInt(stringValue, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	*s = StringEncodedInt(int64Value)
+
+	return nil
+}
+
+func (s *StringEncodedTime) UnmarshalJSON(data []byte) error {
+	stringValue := ""
+
+	if err := json.Unmarshal(data, &stringValue); err != nil {
+		return err
+	}
+
+	timeValue, err := time.Parse("02-Jan-2006 15:04", stringValue)
+	if err != nil {
+		return err
+	}
+
+	*s = StringEncodedTime(timeValue)
+
+	return nil
 }
