@@ -21,9 +21,6 @@
             ],
             "settings": {
                 "go.lintTool": "golangci-lint",
-                "go.lintFlags": [
-                    "--enable-all"
-                ],
                 "go.useLanguageServer": true,
                 "go.formatTool": "custom",
                 "go.alternateTools": {

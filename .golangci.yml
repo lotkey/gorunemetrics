@@ -1,0 +1,35 @@
+linters:
+  enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - copyloopvar
+    - cyclop
+    - err113
+    - errchkjson
+    - errname
+    - errorlint
+    - exhaustive
+    - exhaustruct
+    - gocritic
+    - gosec
+    - inamedparam
+    - intrange
+    - nilerr
+    - nilnil
+    - reassign
+    - revive
+    - unconvert
+    - usestdlibvars
+    - wastedassign
+    - wrapcheck
+
+issues:
+  include:
+    - EXC0001 # Require checking errors, even on commonly ignored errors
+    - EXC0002 # Require exported methods to have a comment
+    - EXC0005 # Error on unnecessary break statements in switch statements
+    - EXC0012 # Require comments on exports
+    - EXC0013 # Require comments for packages
+    - EXC0014 # Require comments on exports to have specific form
