@@ -49,7 +49,9 @@ func NewClient(httpClient *http.Client) Client {
 func (c *client) GetProfile(playerName string) (*PlayerProfile, error) {
 	defer c.httpClient.CloseIdleConnections()
 
-	response, err := c.httpClient.Get(fmt.Sprintf("%s?user=%s", profileAPIURL, url.QueryEscape(playerName)))
+	response, err := c.httpClient.Get(
+		fmt.Sprintf("%s?user=%s", profileAPIURL, url.QueryEscape(playerName)),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to GET player profile: %w", err)
 	}
@@ -57,7 +59,11 @@ func (c *client) GetProfile(playerName string) (*PlayerProfile, error) {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to GET player profile: %v: %w", response.Status, err)
+		return nil, fmt.Errorf(
+			"failed to GET player profile: %v: %w",
+			response.Status,
+			err,
+		)
 	}
 
 	profile := &PlayerProfile{}
@@ -67,7 +73,10 @@ func (c *client) GetProfile(playerName string) (*PlayerProfile, error) {
 	}
 
 	if len(profile.SkillValues) == 0 || profile.Activities == nil {
-		return nil, fmt.Errorf("failed to find player profile data: %w", ErrMissingPlayerData)
+		return nil, fmt.Errorf(
+			"failed to find player profile data: %w",
+			ErrMissingPlayerData,
+		)
 	}
 
 	return profile, nil
@@ -76,7 +85,9 @@ func (c *client) GetProfile(playerName string) (*PlayerProfile, error) {
 func (c *client) GetQuests(playerName string) ([]*PlayerQuestStatus, error) {
 	defer c.httpClient.CloseIdleConnections()
 
-	response, err := c.httpClient.Get(fmt.Sprintf("%s?user=%s", questsAPIURL, url.QueryEscape(playerName)))
+	response, err := c.httpClient.Get(
+		fmt.Sprintf("%s?user=%s", questsAPIURL, url.QueryEscape(playerName)),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to GET player quest status: %w", err)
 	}
@@ -84,7 +95,11 @@ func (c *client) GetQuests(playerName string) ([]*PlayerQuestStatus, error) {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to GET player quest status: %v: %w", response.Status, err)
+		return nil, fmt.Errorf(
+			"failed to GET player quest status: %v: %w",
+			response.Status,
+			err,
+		)
 	}
 
 	quests := struct {
@@ -96,7 +111,10 @@ func (c *client) GetQuests(playerName string) ([]*PlayerQuestStatus, error) {
 	}
 
 	if quests.Quests == nil {
-		return nil, fmt.Errorf("failed to find player quest status data: %w", ErrMissingPlayerData)
+		return nil, fmt.Errorf(
+			"failed to find player quest status data: %w",
+			ErrMissingPlayerData,
+		)
 	}
 
 	return quests.Quests, nil

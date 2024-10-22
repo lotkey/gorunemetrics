@@ -15,18 +15,25 @@
             "extensions": [
                 "392781.runescape-icon-theme",
                 "emeraldwalk.RunOnSave",
+                "GitHub.vscode-github-actions",
                 "golang.Go",
                 "ms-azuretools.vscode-docker"
-            ]
-        },
-        "settings": {
-            "emeraldwalk.runonsave": {
-                "commands": [
-                    {
-                        "match": "\\.go$",
-                        "cmd": "golines ${file} -w -m 80"
-                    }
-                ]
+            ],
+            "settings": {
+                "go.lintTool": "golangci-lint",
+                "go.lintFlags": [
+                    "--enable-all"
+                ],
+                "go.useLanguageServer": true,
+                "go.formatTool": "custom",
+                "go.alternateTools": {
+                    "customFormatter": "golines"
+                },
+                "go.formatFlags": [
+                    "-m",
+                    "80"
+                ],
+                "editor.formatOnSave": true
             }
         }
     }

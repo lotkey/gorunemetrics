@@ -19,7 +19,9 @@ func main() {
 	}
 
 	if len(os.Args) != 2 {
-		fmt.Println("Please pass in a SINGLE player name as a command line argument.")
+		fmt.Println(
+			"Please pass in a SINGLE player name as a command line argument.",
+		)
 		os.Exit(1)
 	}
 
@@ -35,9 +37,12 @@ func main() {
 	}
 
 	// Find the skill with the minimum level
-	minimumSkill := slices.MinFunc(profile.SkillValues, func(a, b *gorunemetrics.SkillValue) int {
-		return compareInts(a.Level, b.Level)
-	})
+	minimumSkill := slices.MinFunc(
+		profile.SkillValues,
+		func(a, b *gorunemetrics.SkillValue) int {
+			return compareInts(a.Level, b.Level)
+		},
+	)
 
 	// If the minimum level is at least 99, they have maxed!
 	if minimumSkill.Level >= 99 {

@@ -18,7 +18,9 @@ func main() {
 	}
 
 	if len(os.Args) != 2 {
-		fmt.Println("Please pass in a SINGLE player name as a command line argument.")
+		fmt.Println(
+			"Please pass in a SINGLE player name as a command line argument.",
+		)
 		os.Exit(1)
 	}
 
@@ -40,7 +42,10 @@ func main() {
 	for _, quest := range quests {
 		if quest.UserEligible && quest.Status != gorunemetrics.Completed {
 			if quest.Members {
-				incompleteUnlockedP2PQuests = append(incompleteUnlockedP2PQuests, quest)
+				incompleteUnlockedP2PQuests = append(
+					incompleteUnlockedP2PQuests,
+					quest,
+				)
 			} else {
 				incompleteUnlockedF2PQuests = append(incompleteUnlockedF2PQuests, quest)
 			}
